@@ -1,0 +1,59 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+file_path = "C:/Users/INDIA/Downloads/US_Accidents_Small.xlsx"  
+df = pd.read_excel(file_path)
+
+
+print(df.head())
+
+
+if 'Start_Time' in df.columns:
+    df['Start_Time'] = pd.to_datetime(df['Start_Time'], errors='coerce', format='mixed')
+
+
+df['Hour'] = df['Start_Time'].dt.hour
+df['DayOfWeek'] = df['Start_Time'].dt.day_name()
+df['Month'] = df['Start_Time'].dt.month_name()
+
+
+plt.figure(figsize=(10, 5))
+sns.countplot(x=df['Hour'], hue=df['Hour'], palette='coolwarm', legend=False)
+plt.title("Accidents by Time of Day")
+plt.xlabel("Hour of Day")
+plt.ylabel("Number of Accidents")
+plt.show()
+
+
+if 'Weather_Condition' in df.columns:
+    plt.figure(figsize=(12, 6))
+    top_weather = df['Weather_Condition'].value_counts().nlargest(10)
+    sns.barplot(x=top_weather.index, y=top_weather.values, hue=top_weather.index, palette='viridis', legend=False)
+    plt.xticks(rotation=45)
+    plt.title("Top 10 Weather Conditions Causing Accidents")
+    plt.xlabel("Weather Condition")
+    plt.ylabel("Number of Accidents")
+    plt.show()
+
+
+if 'Road_Condition' in df.columns:
+    plt.figure(figsize=(8, 4))
+    sns.countplot(x=df['Road_Condition'], hue=df['Road_Condition'], palette='magma', legend=False)
+    plt.title("Accidents by Road Condition")
+    plt.xlabel("Road Condition")
+    plt.ylabel("Number of Accidents")
+    plt.xticks(rotation=45)
+    plt.show()
+
+
+if 'Start_Lat' in df.columns and 'Start_Lng' in df.columns:
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(x=df['Start_Lng'], y=df['Start_Lat'], alpha=0.2)
+    plt.title("Accident Hotspots")
+    plt.xlabel("Longitude")
+    plt.ylabel("Latitude")
+    plt.show()
+
+print("✅ Analysis Complete!")
